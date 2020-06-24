@@ -1,0 +1,10 @@
+.links line {
+  stroke: whitesmoke;
+  stroke-opacity: 0.6;
+}
+
+.nodes rect {
+  stroke: #fff;
+  stroke-width: 1.5px;
+  cursor: pointer;
+}
