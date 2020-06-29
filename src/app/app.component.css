@@ -1,8 +1,118 @@
 circle {
   cursor: pointer;
 }
-.nodes rect {
-  stroke: black;
-  stroke-width: 1.5px;
+.nodes{
   cursor: pointer;
+}
+.nodeTitle {
+  font-weight: bold;
+  font-size: 17px;
+}
+table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 0 auto;
+  width: 100%;
+}
+.selectedTable {
+  position: relative;
+  top: 10px;
+  left: 50px;
+  font-size: 20px;
+  color: white;
+}
+.selectedRelation {
+  position: relative;
+  top: 10px;
+  left: 450px;
+  font-size: 20px;
+  color: white;
+}
+.relationType{
+  position: relative;
+  top: 30px;
+  left: 850px;
+  font-size: 15px;
+  color: white;
+}
+.joinType{
+  margin-left: 10px;
+  position: relative;
+  top: 30px;
+  left: 850px;
+  font-size: 15px;
+  color: white;
+}
+.navBar {
+  position: fixed;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background-color: #316EA4 ;
+}
+td {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+tr.tableRow:nth-child(even) {
+  background-color: #e6e6e6;
+}
+img {
+  width: 17px;
+  height: 17px;
+}
+tr.tableRow:last-child {
+  border-bottom: none;
+}
+.keyAndIcon {
+  display: flex;
+  justify-content: left;
+}
+.KeyIcon {
+  display: block;
+  padding-right: 8px;
+  align-items: center;
+  margin-top: 3px ;
+}
+.divContent {
+  height: 120px;
+  overflow-y: auto;
+  background-color: whitesmoke;
+  color: black;
+  padding-top: 2px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.wrapperDiv {
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: #316EA4;
+}
+.title {
+  margin-top: 10px;
+  text-align: center;
+  padding: 0px;
+  border-bottom: 1px solid black;
+  color: white;
+  font-weight: bold;
+}
+.divContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+.divContent::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+.divContent::-webkit-scrollbar-thumb {
+  background: gray;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.divContent::-webkit-scrollbar-thumb:hover {
+  background: rgb(133, 128, 128);
 }

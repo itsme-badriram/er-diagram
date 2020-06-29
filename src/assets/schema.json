@@ -1,27 +1,94 @@
 {
   "nodes": [
-    { "name": "dbm_mrd_btl", "type": "table", "color": "#c7342a" },
-    { "name": "table_2", "type": "table", "color": "#f7b440" },
-    { "name": "table_3", "type": "table", "color": "#4287f5" },
-    { "name":"dbm_mrd_btl_field1", "id": "accountkey", "type": "field", "color": "whitesmoke" },
-    { "name": "dbm_mrd_btl_field2", "id": "reporting_month" , "type": "field", "color": "whitesmoke" },
-    { "name": "table_2_field1", "id": "accountkey", "type": "field", "color": "whitesmoke" },
-    { "name": "table_2_field2", "id": "reporting_month" , "type": "field", "color": "whitesmoke" },
-    { "name": "table_3_field1", "id": "gsn" , "type": "field", "color": "whitesmoke" },
-    { "name": "table_3_field2", "id": "cob_dt", "type": "field", "color": "whitesmoke" },
-    { "name": "dbm_mrd_btl-table_2", "id": "Relation_to", "type": "relation", "relation": "1" , "join_type": "left_join" ,"color": "#115173" },
-    { "name": "dbm_mrd_btl-table_3", "id": "Relation_to",  "type": "relation", "relation": "1", "join_type": "left_join", "color": "#115173" }
+    { "name": "dbm_mrd_btl", "type": "table", "keys": [
+      {"name": "productcode", "dataType": "number", "type": "foreign_key" },{"name" : "accountkey", "type" : "primary_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key", "dataType": "string"},
+      {"name" : "key_23", "type" : "field", "dataType": "integer"},
+      {"name" : "key_1", "type" : "field", "dataType": "double"},
+      {"name" : "key_2", "type" : "field", "dataType": "string"},
+      {"name" : "key_23", "type" : "field" ,"dataType": "integer"}
+    ], "color": "whitesmoke" },
+    { "name": "table_2", "type": "table", "keys": [
+      {"name" : "accountkey", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key" ,"dataType": "string"},
+      {"name" : "key_3", "type" : "field", "dataType": "integer"},
+      {"name" : "key_4", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "table_3", "type": "table", "keys": [
+      {"name" : "gsn", "type" : "foreign_key" , "dataType": "number"},
+      {"name" : "cob_dt", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "key_5keykey", "type" : "primary_key", "dataType": "string"},
+      {"name" : "key_5", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "dbm_mrd_btl1", "type": "table", "keys": [
+      {"name": "productcode", "dataType": "number", "type": "foreign_key" },{"name" : "accountkey", "type" : "primary_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key", "dataType": "string"},
+      {"name" : "key_23", "type" : "field", "dataType": "integer"},
+      {"name" : "key_1", "type" : "field", "dataType": "double"},
+      {"name" : "key_2", "type" : "field", "dataType": "string"},
+      {"name" : "key_23", "type" : "field" ,"dataType": "integer"}
+    ], "color": "whitesmoke" },
+    { "name": "table_21", "type": "table", "keys": [
+      {"name" : "accountkey", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key" ,"dataType": "string"},
+      {"name" : "key_3", "type" : "field", "dataType": "integer"},
+      {"name" : "key_4", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "table_31", "type": "table", "keys": [
+      {"name" : "gsn", "type" : "foreign_key" , "dataType": "number"},
+      {"name" : "cob_dt", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "key_5keykey", "type" : "primary_key", "dataType": "string"},
+      {"name" : "key_5", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "dbm_mrd_btl2", "type": "table", "keys": [
+      {"name": "productcode", "dataType": "number", "type": "foreign_key" },{"name" : "accountkey", "type" : "primary_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key", "dataType": "string"},
+      {"name" : "key_23", "type" : "field", "dataType": "integer"},
+      {"name" : "key_1", "type" : "field", "dataType": "double"},
+      {"name" : "key_2", "type" : "field", "dataType": "string"},
+      {"name" : "key_23", "type" : "field" ,"dataType": "integer"}
+    ], "color": "whitesmoke" },
+    { "name": "table_22", "type": "table", "keys": [
+      {"name" : "accountkey", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key" ,"dataType": "string"},
+      {"name" : "key_3", "type" : "field", "dataType": "integer"},
+      {"name" : "key_4", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "table_32", "type": "table", "keys": [
+      {"name" : "gsn", "type" : "foreign_key" , "dataType": "number"},
+      {"name" : "cob_dt", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "key_5keykey", "type" : "primary_key", "dataType": "string"},
+      {"name" : "key_5", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "dbm_mrd_btl3", "type": "table", "keys": [
+      {"name": "productcode", "dataType": "number", "type": "foreign_key" },{"name" : "accountkey", "type" : "primary_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key", "dataType": "string"},
+      {"name" : "key_23", "type" : "field", "dataType": "integer"},
+      {"name" : "key_1", "type" : "field", "dataType": "double"},
+      {"name" : "key_2", "type" : "field", "dataType": "string"},
+      {"name" : "key_23", "type" : "field" ,"dataType": "integer"}
+    ], "color": "whitesmoke" },
+    { "name": "table_23", "type": "table", "keys": [
+      {"name" : "accountkey", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "reporting_month", "type" : "foreign_key" ,"dataType": "string"},
+      {"name" : "key_3", "type" : "field", "dataType": "integer"},
+      {"name" : "key_4", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" },
+    { "name": "table_33", "type": "table", "keys": [
+      {"name" : "gsn", "type" : "foreign_key" , "dataType": "number"},
+      {"name" : "cob_dt", "type" : "foreign_key", "dataType": "number"},
+      {"name" : "key_5keykey", "type" : "primary_key", "dataType": "string"},
+      {"name" : "key_5", "type" : "field", "dataType": "double"}
+    ], "color": "whitesmoke" }
   ],
   "links": [
-    { "source": "dbm_mrd_btl", "target": "dbm_mrd_btl-table_2", "relationship" : "OneToOne"  },
-    { "source": "dbm_mrd_btl-table_2", "target": "table_2", "relationship" : "OneToOne"  },
-    { "source": "dbm_mrd_btl", "target": "dbm_mrd_btl-table_3", "relationship" : "ManyToMany"  },
-    { "source": "dbm_mrd_btl-table_3", "target": "table_3", "relationship" : "ManyToMany"  },
-    { "source": "dbm_mrd_btl", "target": "dbm_mrd_btl_field1", "relationship" : "Attribute"  },
-    { "source": "dbm_mrd_btl", "target": "dbm_mrd_btl_field2", "relationship" : "Attribute" },
-    { "source": "table_2", "target": "table_2_field1", "relationship" : "Attribute"  },
-    { "source": "table_2", "target": "table_2_field2", "relationship" : "Attribute" },
-    { "source": "table_3", "target": "table_3_field1", "relationship" : "Attribute"  },
-    { "source": "table_3", "target": "table_3_field2", "relationship" : "Attribute" }
+    { "source": "dbm_mrd_btl", "target": "table_2", "relationship" : "OneToOne" , "joinType" : "Left", "masterkey": "accountkey,reporting_month", "slavekey": "accountkey,reporting_month"  },
+    { "source": "dbm_mrd_btl", "target": "table_3", "relationship" : "ManyToMany" , "joinType" : "Left" ,"masterkey": "productcode,reporting_month", "slavekey": "gsn,cob_dt"  },
+    { "source": "dbm_mrd_btl1", "target": "table_21", "relationship" : "OneToOne", "joinType" : "Left", "masterkey": "accountkey,reporting_month", "slavekey": "accountkey,reporting_month"  },
+    { "source": "dbm_mrd_btl1", "target": "table_31", "relationship" : "ManyToMany", "joinType" : "Left","masterkey": "productcode,reporting_month", "slavekey": "gsn,cob_dt"  },
+    { "source": "dbm_mrd_btl2", "target": "table_22", "relationship" : "OneToOne", "joinType" : "Left", "masterkey": "accountkey,reporting_month", "slavekey": "accountkey,reporting_month"  },
+    { "source": "dbm_mrd_btl2", "target": "table_32", "relationship" : "ManyToMany", "joinType" : "Left","masterkey": "productcode,reporting_month", "slavekey": "gsn,cob_dt"  },
+    { "source": "dbm_mrd_btl3", "target": "table_23", "relationship" : "OneToOne", "joinType" : "Left", "masterkey": "accountkey,reporting_month", "slavekey": "accountkey,reporting_month"  },
+    { "source": "dbm_mrd_btl3", "target": "table_33", "relationship" : "ManyToMany", "joinType" : "Left" ,"masterkey": "productcode,reporting_month", "slavekey": "gsn,cob_dt" }
   ]
 }
