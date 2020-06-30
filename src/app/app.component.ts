@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
     const simulation: any = d3.forceSimulation()
     .force('center', d3.forceCenter( width / 2 , height / 2 ))
     .force('charge', d3.forceManyBody().strength(-50))
-    .force('collide', d3.forceCollide(250).strength(0.9))
+    .force('collide', d3.forceCollide(200).strength(0.9))
     .force('link', d3.forceLink<any, any>().id(d => d.name).distance(450));
 
     d3.json<DiagramModel>('assets/schema.json').then((data) => {
@@ -72,13 +72,23 @@ export class AppComponent implements OnInit {
       let activeRelation;
       let textsAndNodes;
       let navBar;
+      let checkBoxOpened = 0;
       let masterKey = [];
       let slaveKey = [];
+      let checkedTables = {};
+      const g = svg.append('g')
+      .attr('class', 'insideSVG');
       let members = [{
         label: 'None'
       }];
+      let checkBoxContent = '';
       for (let node of graph.nodes) {
         if (node.type === 'table') {
+          checkedTables[node.name] = {
+            checked : false,
+            selected : false
+          };
+          checkBoxContent += '<input type="checkbox" id="' + node.name + '"><label for="' + node.name + '"> ' + node.name + '</label><br>';
           let element = {
             label: node.name
           };
@@ -163,7 +173,7 @@ export class AppComponent implements OnInit {
             // tslint:disable-next-line: max-line-length
             if ((split[0] === selectedTable || split[1] === selectedTable) && (split[0] === selectedRelation || split[1] === selectedRelation) ) {
               let newText = navBar.select('.navBar');
-              newText.html('<span class="selectedTable">Selected Table</span><span class="selectedRelation">Selected Relation</span><span class="relationType"><b>Relationship</b> : ' + selectedLink.attr('relationship') + '</span><span class="joinType"><b>Join Type</b> : ' + selectedLink.attr('joinType') + ' Join</span>');
+              newText.html('<span class="selectedTable">Selected Table</span><span class="selectedRelation">Selected Relation</span><span class="relationType">Relationship : ' + selectedLink.attr('relationship') + '</span><span class="joinType">Join Type : ' + selectedLink.attr('joinType') + ' Join</span>');
               let temp = selectedLink.attr('masterkey');
               let temp1 = temp.split(',', 2);
               masterKey.push(temp1[0]);
@@ -447,7 +457,7 @@ export class AppComponent implements OnInit {
       }
       createSimulation();
       function createSimulation() {
-        link = svg.append('g')
+        link = g.append('g')
         .attr('class', 'links')
         .selectAll('line')
         .data((d: any) => {
@@ -488,7 +498,7 @@ export class AppComponent implements OnInit {
         .attr('stroke-opacity', 0.6)
         ;
 
-        textsAndNodes = svg.append('g')
+        textsAndNodes = g.append('g')
         .selectAll('g')
         .data((d: any) => {
           const tempNodes = [];
@@ -517,6 +527,20 @@ export class AppComponent implements OnInit {
           let selectedNode = d3.select(this);
           selectedTable = selectedNode.select('.title').text();
           activeText.text(selectedTable);
+        //  d.px = width / 2;
+         // d.py = height / 2;
+         // d.x = d.x + 0.8 * (d.px - d.x);
+         // d.y = d.y + 0.8 * (d.py - d.y);
+          d.fx = width / 2;
+          d.fy = height / 2;
+          simulation.alphaTarget(0.1).restart();
+          setTimeout(function(){
+            d.fx = null;
+            d.fy = null;
+            simulation.alphaTarget(0);
+          }, 1000);
+          // simulation.force('collide', d3.forceCollide(30).strength(0.7));
+
           showTransition();
         }
 
@@ -561,7 +585,7 @@ export class AppComponent implements OnInit {
       }
       function resetSimultaion() {
         simulation.alphaTarget(0.1).restart();
-        setInterval(function(){simulation.alphaTarget(0);
+        setTimeout(function(){simulation.alphaTarget(0);
         }, 1000);
       }
       function update() {
@@ -570,7 +594,7 @@ export class AppComponent implements OnInit {
         let i = 0;
         d3.selectAll('g.nodes')
         .each(function(d) {
-          const g = d3.select(this);
+          const gg = d3.select(this);
           // console.log(words);
           let graphNode = graph.nodes[i];
           let htmlStr = '';
@@ -606,7 +630,7 @@ export class AppComponent implements OnInit {
           if (maxWidth < optimumWidth) {
             maxWidth = optimumWidth;
           }
-          g.append('foreignObject')
+          gg.append('foreignObject')
           .attr('transform', 'translate(0,30)')
           .attr('width', maxWidth.toString())
           .attr('height', 200)
@@ -615,9 +639,91 @@ export class AppComponent implements OnInit {
           i++;
         });
       }
+      svg
+      .on('click', function() {
+        d3.selectAll('.wrapperDiv')
+        .style('background-color', '#316EA4');
+        d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
+      });
+      svg.call(d3.zoom()
+      .extent([[0, 0], [width, height]])
+      .scaleExtent([0, 8])
+      .on("zoom", zoomed));
+      svg.append("foreignObject")
+        .attr('class', 'checkboxList')
+        .attr("width", 200)
+        .attr("height", 400)
+        .attr('transform', 'translate(300,60)')
+        .append("xhtml:body")
+        .html('<form class="tableCheckbox">' + checkBoxContent + '</form>')
+        .on("click", function(d, i){
+          d3.selectAll('.tableCheckbox input')
+          .each(function() {
+            let check: any = d3.select(this);
+            if (check.node().checked) {
+              if (checkedTables[check.node().id].checked) {
+                checkedTables[check.node().id].selected = false;
+              }
+              else {
+                checkedTables[check.node().id].checked = true;
+                checkedTables[check.node().id].selected = true;
+              }
+            }
+            else {
+              checkedTables[check.node().id].checked = false;
+              checkedTables[check.node().id].selected = false;
+            }
+          });
+          for (let key in checkedTables) {
+            if (checkedTables[key].checked && checkedTables[key].selected) {
+              d3.selectAll('g.nodes')
+        .each(function(d: any) {
+          const temp = d3.select(this);
+          const div = temp.select('.wrapperDiv .title');
+          if (div.text() === key) {
+            d.fx = width / 2;
+            d.fy = height / 2;
+            simulation.alphaTarget(0.1).restart();
+            setTimeout(function(){
+          d.fx = null;
+          d.fy = null;
+          simulation.alphaTarget(0);
+        }, 1000);
+          }
 
+        });
+
+            }
+
+          }
+        });
+
+      function zoomed() {
+    g.attr("transform", d3.event.transform);
+  }
+      svg.on('dblclick.zoom', null);
+      svg.append('text')
+      .attr('font-size', '20px')
+      .attr('fill', 'white')
+    .attr('x', 300)
+    .attr('y', 50)
+    .style('cursor', 'pointer')
+    .text('View Tables ▼')
+    .on('click', function() {
+      if (checkBoxOpened === 0) {
+        d3.select('.checkboxList')
+      .style('display', 'block');
+        checkBoxOpened = 1;
+      }
+      else {
+        d3.select('.checkboxList')
+      .style('display', 'none');
+        checkBoxOpened = 0;
+      }
+
+    });
       function ticked() {
-        if (selectedRelation) {
+        /*if (selectedRelation) {
           for (let node of graph.nodes) {
             if (node.name === selectedRelation) {
               node.x = width / 3.5;
@@ -637,7 +743,7 @@ export class AppComponent implements OnInit {
               break;
             }
           }
-        }
+        }*/
         textsAndNodes
         .attr('transform', function(d){
           let str = 'translate(' + (d.x - 50) + ',' + (d.y - 50) + ')';

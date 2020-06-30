@@ -31,16 +31,16 @@ table {
 .relationType{
   position: relative;
   top: 30px;
-  left: 850px;
-  font-size: 15px;
+  left: 750px;
+  font-size: 17px;
   color: white;
 }
 .joinType{
-  margin-left: 10px;
+  margin-left: 20px;
   position: relative;
   top: 30px;
-  left: 850px;
-  font-size: 15px;
+  left: 750px;
+  font-size: 17px;
   color: white;
 }
 .navBar {
@@ -63,6 +63,14 @@ img {
 }
 tr.tableRow:last-child {
   border-bottom: none;
+}
+.checkboxList {
+  display: none;
+}
+.tableCheckbox {
+  background-color: white;
+  border: 0.5px solid #316EA4;
+  border-radius: 2px;
 }
 .keyAndIcon {
   display: flex;
