@@ -2,8 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import * as d3 from 'd3';
 import { DiagramModel } from './diagram/diagram.model';
-import { active } from 'd3';
-
+import cola from 'cytoscape-cola';
 interface Node {
   keys: any;
   name: string ;
@@ -33,23 +32,17 @@ interface Graph {
 })
 export class AppComponent implements OnInit {
   ngOnInit() {
-    const svg = d3.select('svg');
+    const svg: any = d3.select('svg');
     /*.call(d3.zoom().scaleExtent([0.5, 8]).on('zoom', () => {
       svg.attr('transform', d3.event.transform);
    }));*/
     const width = 1600;
     const height = 1000;
-    /*let zoom: any = d3.zoom()
-    .scaleExtent([-1 , 8])
-    .on('zoom', zoomed); */
-    function zoomed() {
-      svg.attr('transform', d3.event.transform);
-    }
     const color = d3.scaleOrdinal(d3.schemeCategory10);
     const simulation: any = d3.forceSimulation()
     .force('center', d3.forceCenter( width / 2 , height / 2 ))
     .force('charge', d3.forceManyBody().strength(-50))
-    .force('collide', d3.forceCollide(200).strength(0.9))
+    .force('collide', d3.forceCollide(270).strength(0.5))
     .force('link', d3.forceLink<any, any>().id(d => d.name).distance(450));
 
     d3.json<DiagramModel>('assets/schema.json').then((data) => {
@@ -66,29 +59,34 @@ export class AppComponent implements OnInit {
       const graph: Graph = { nodes, links } as Graph;
 
       let link;
+      let selection;
       let selectedRelation;
       let selectedTable;
       let activeText;
       let activeRelation;
       let textsAndNodes;
       let navBar;
-      let checkBoxOpened = 0;
       let masterKey = [];
       let slaveKey = [];
       let checkedTables = {};
+      let tableModel = '';
       const g = svg.append('g')
+      .attr('transform', 'scale(0.5,0.5)')
       .attr('class', 'insideSVG');
       let members = [{
         label: 'None'
       }];
+      let zoom: any = d3.zoom()
+      .extent([[0, 0], [width, height]])
+      .scaleExtent([0, 8])
+      .on("zoom", zoomed);
       let checkBoxContent = '';
       for (let node of graph.nodes) {
         if (node.type === 'table') {
-          checkedTables[node.name] = {
-            checked : false,
-            selected : false
-          };
-          checkBoxContent += '<input type="checkbox" id="' + node.name + '"><label for="' + node.name + '"> ' + node.name + '</label><br>';
+          // tslint:disable-next-line: max-line-length
+          tableModel += '<tr><td class="tableRowModal" style="padding-left: 25px">' + node.name + '</td><td class="tableRowModal" style="text-align: center;"><input type="checkbox" id="' + node.name + '"></td></tr>';
+          // tslint:disable-next-line: max-line-length
+          checkBoxContent += '<input class="inputCheckbox" type="checkbox" id="' + node.name + '"><label class="inputCheckbox" for="' + node.name + '"> ' + node.name + '</label><br>';
           let element = {
             label: node.name
           };
@@ -110,16 +108,24 @@ export class AppComponent implements OnInit {
           selectedTable = option.label;
           selectedRelation = null;
           d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
-          d3.selectAll('g.nodes .wrapperDiv')
-          .each(function() {
-            const temp = d3.select(this);
-            const div = temp.select('.title');
+          d3.selectAll('g.nodes ')
+          .each(function(d: any) {
+            const tem = d3.select(this);
+            const temp = tem.select('.wrapperDiv');
+            const div = temp.select('.wrapperDiv .title');
             if (div.text() === selectedTable) {
-              temp.style('background-color', '#de5d83');
 
+              svg.transition()
+      .duration(1000)
+      .call(zoom.transform,
+        d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(0.6)
+        .translate( -(d.x) , -(d.y) )
+      );
             }
             else {
-              temp.style('background-color', '#316EA4');
+
             }
           });
           let newText = navBar.select('.navBar');
@@ -137,13 +143,13 @@ export class AppComponent implements OnInit {
               }
             }
           let newConfig = {
-              width: 500,
+              width: 250,
               container: svg,
               members,
               fontSize: 16,
               color: '#333',
               fontFamily: 'calibri',
-              x: 500,
+              x: 700,
               y: 35,
               changeHandler: function(option) {
                 // 'this' refers to the option group
@@ -160,11 +166,9 @@ export class AppComponent implements OnInit {
             const temp = d3.select(this);
             const div = temp.select('.title');
             if (div.text() === selectedTable || div.text() === selectedRelation) {
-              temp.style('background-color', '#de5d83');
-
             }
             else {
-              temp.style('background-color', '#316EA4');
+
             }
           });
                 d3.selectAll('.links line').each(function() {
@@ -206,7 +210,7 @@ export class AppComponent implements OnInit {
 
               }
             };
-          svgDropDown(newConfig, 'optionRelation');
+          // svgDropDown(newConfig, 'optionRelation');
           showTransition();
           resetSimultaion();
         }
@@ -531,23 +535,32 @@ export class AppComponent implements OnInit {
          // d.py = height / 2;
          // d.x = d.x + 0.8 * (d.px - d.x);
          // d.y = d.y + 0.8 * (d.py - d.y);
-          d.fx = width / 2;
+          /*d.fx = width / 2;
           d.fy = height / 2;
+
           simulation.alphaTarget(0.1).restart();
           setTimeout(function(){
+            console.log(simulation.alpha().toPrecision(6));
             d.fx = null;
             d.fy = null;
             simulation.alphaTarget(0);
-          }, 1000);
+          }, 5000);
           // simulation.force('collide', d3.forceCollide(30).strength(0.7));
+          svg.transition()
+      .duration(1000)
+      .call(zoom.transform,
+        d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(0.6)
+        .translate( -(d.fx) , -(d.fy) )
+      );
+*/
 
           showTransition();
         }
 
         link.append('title')
         .text((d) => d.relationship);
-
-
         simulation
         .nodes(graph.nodes as any)
         .on('tick', ticked);
@@ -555,14 +568,16 @@ export class AppComponent implements OnInit {
         simulation.force('link')
         .links(graph.links);
         update();
+
+
       }
       navBar = svg.append('foreignObject')
       .attr('transform', 'translate(0, 0)')
       .attr('width', 1600)
       .attr('height', 80)
       // tslint:disable-next-line: max-line-length
-      .html('<div class="navBar"><span class="selectedTable">Selected Table</span></div>');
-      svgDropDown(config, 'optionTable');
+      .html('<div class="navBar"><span class="selectedTable">ERD-D3</span></div>');
+      // svgDropDown(config, 'optionTable');
       function showTransition() {
         /*svg.transition()
       .duration(800)
@@ -615,7 +630,7 @@ export class AppComponent implements OnInit {
             }
 
            // tslint:disable-next-line: max-line-length
-            htmlStr += '<tr class="tableRow"><td class="keyAndIcon"><span class="KeyIcon"><img src="assets/' + img + '.png"></img></span><span class="fieldname">' + node.name + '</span></td><td>' + node.dataType + '</td></tr>';
+            htmlStr += '<tr class="tableRow"><td class="keyAndIcon"><span class="KeyIcon"><img src="assets/' + img + '.png" width="17px" height="17px"></img></span><span class="fieldname">' + node.name + '</span></td><td class="dataType">' + node.dataType + '</td></tr>';
             length = node.name.length + node.type.length;
             if (maxLength < length) {
              maxLength = length;
@@ -635,14 +650,14 @@ export class AppComponent implements OnInit {
           .attr('width', maxWidth.toString())
           .attr('height', 200)
           // tslint:disable-next-line: max-line-length
-          .html('<div class="wrapperDiv"><div class="title"><h1>' + graphNode.name + '</h1></div><div class="divContent"><table>' + htmlStr + '</table></div></div>');
+          .html('<div class="wrapperDiv" style="background-color:' + color(graphNode.name)  + '"><div class="title"><h1>' + graphNode.name + '</h1></div><div class="divContent"><table>' + htmlStr + '</table></div></div>');
           i++;
         });
       }
-      svg
-      .on('click', function() {
-        d3.selectAll('.wrapperDiv')
-        .style('background-color', '#316EA4');
+      g.on('click', function() {
+        let newText = navBar.select('.navBar');
+              // tslint:disable-next-line: max-line-length
+        newText.html('<span class="selectedTable">ERD-D3</span>');
         d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
       });
       svg.call(d3.zoom()
@@ -655,49 +670,60 @@ export class AppComponent implements OnInit {
         .attr("height", 400)
         .attr('transform', 'translate(300,60)')
         .append("xhtml:body")
-        .html('<form class="tableCheckbox">' + checkBoxContent + '</form>')
+        .html('<div class="checkboxContent tableCheckbox"><form>' + checkBoxContent + '</form><div>')
         .on("click", function(d, i){
           d3.selectAll('.tableCheckbox input')
           .each(function() {
-            let check: any = d3.select(this);
-            if (check.node().checked) {
-              if (checkedTables[check.node().id].checked) {
-                checkedTables[check.node().id].selected = false;
-              }
-              else {
-                checkedTables[check.node().id].checked = true;
-                checkedTables[check.node().id].selected = true;
-              }
-            }
-            else {
-              checkedTables[check.node().id].checked = false;
-              checkedTables[check.node().id].selected = false;
-            }
           });
-          for (let key in checkedTables) {
-            if (checkedTables[key].checked && checkedTables[key].selected) {
-              d3.selectAll('g.nodes')
-        .each(function(d: any) {
-          const temp = d3.select(this);
-          const div = temp.select('.wrapperDiv .title');
-          if (div.text() === key) {
-            d.fx = width / 2;
-            d.fy = height / 2;
-            simulation.alphaTarget(0.1).restart();
-            setTimeout(function(){
-          d.fx = null;
-          d.fy = null;
-          simulation.alphaTarget(0);
-        }, 1000);
-          }
-
         });
-
-            }
-
-          }
+      svg.append("foreignObject")
+        .attr('class', 'zoomIn')
+        .attr("width", 80)
+        .attr("height", 80)
+        .attr('transform', 'translate(1400,580)')
+        .append("xhtml:body")
+        .html('<a class="btn"><h1 class="zoomin">↻</h1></a>')
+        .on('click', function() {
+          let xArray = [];
+          let x = 0;
+          let y = 0;
+          let yArray = []
+          d3.selectAll('g.nodes ')
+          .each(function(d: any) {
+            const tem = d3.select(this);
+            x += d.x;
+            y += d.y;
+            xArray.push(d.x);
+            yArray.push(d.y);
+          });
+          svg.transition()
+      .duration(1000)
+      .call(zoom.transform,
+        d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(0.4)
+        .translate( -(x / xArray.length) , -(y / yArray.length)) );
         });
-
+      svg.append("foreignObject")
+        .attr('class', 'zoomIn')
+        .attr("width", 80)
+        .attr("height", 80)
+        .attr('transform', 'translate(1400,640)')
+        .append("xhtml:body")
+        .html('<a class="btn"><h1 class="zoomin">+</h1></a>')
+        .on('click', function() {
+          svg.transition().call(zoom.scaleBy, 2);
+        });
+      svg.append("foreignObject")
+        .attr('class', 'zoomIn')
+        .attr("width", 80)
+        .attr("height", 80)
+        .attr('transform', 'translate(1400,700)')
+        .append("xhtml:body")
+        .html('<a class="btn"><h1 class="zoomin">-</h1></a>')
+        .on('click', function() {
+          svg.transition().call(zoom.scaleBy, 0.5);
+        });
       function zoomed() {
     g.attr("transform", d3.event.transform);
   }
@@ -710,43 +736,260 @@ export class AppComponent implements OnInit {
     .style('cursor', 'pointer')
     .text('View Tables ▼')
     .on('click', function() {
-      if (checkBoxOpened === 0) {
-        d3.select('.checkboxList')
+      d3.select('.openModal')
       .style('display', 'block');
-        checkBoxOpened = 1;
-      }
-      else {
-        d3.select('.checkboxList')
-      .style('display', 'none');
-        checkBoxOpened = 0;
-      }
-
+      d3.select('.modalSearch')
+      .style('display', 'block');
     });
-      function ticked() {
-        /*if (selectedRelation) {
-          for (let node of graph.nodes) {
-            if (node.name === selectedRelation) {
-              node.x = width / 3.5;
-              node.y = height / 2.5;
+      svg.append('text')
+    .attr('font-size', '20px')
+    .attr('fill', 'white')
+  .attr('x', 500)
+  .attr('y', 50)
+  .style('cursor', 'pointer')
+  .text('Filter ▼')
+  .on('click', function() {
+    d3.select('.openModal')
+    .style('display', 'block');
+    d3.select('.modal')
+    .style('display', 'block');
+  });
+      svg.append('foreignObject')
+      .attr('class', 'openModal')
+      .style('background-color', '#333')
+      .style('display', 'none')
+    .style('opacity', '0.3')
+    .attr("width", width)
+  .attr("height", height)
+  .attr('transform', 'translate(0,0)');
+      svg.append("foreignObject")
+  .attr('class', 'modal')
+  .attr("width", width)
+  .attr("height", height)
+  .style('display', 'none')
+  .attr('transform', 'translate(0,0)')
+  .append("xhtml:body")
+  .html('<div class="tablesModal"><div class="modalHeader"><span>Filter</span><span class="icon"><img src="assets/filter.png" width="27px" height="27px"></img></span></div><br><hr><div class="tablesModalContent"><div  class="modalContentHeader"><span class="modalContentHeaderTitle">Tables</span></div><div class="modalContent"><table>' + tableModel + '</table></div></div><br><hr><button class="button">Close</button></div>');
+      d3.select('.button').on('click', function() {
+        d3.select('.openModal')
+        .style('display', 'none');
+        d3.select('.modal')
+        .style('display', 'none');
+});
+      d3.selectAll('.modalContent input').attr('checked', 'checked');
+      d3.selectAll('.modalContent input')
+.on('click', function() {
+  let check: any = d3.select(this);
+  let key = check.node().id;
+  if (check.node().checked) {
+    d3.selectAll('g.links line')
+    .each(function(d: any) {
+    const temp = d3.select(this);
+    const str = temp.attr('link');
+    let split = str.split(' ', 2);
+    if (split[1] === key || split[0] === key) {
+          temp.style('display', 'block');
+          d3.selectAll('g.nodes').each(function(){
+            const tem = d3.select(this);
+            const temp1 = tem.select('.wrapperDiv');
+            const div = temp1.select('.wrapperDiv .title');
+            if (div.text() === key) {
+              tem.style('display', 'block');
             }
-            if (node.name === selectedTable) {
-              node.x = width / 1.5;
-              node.y = height / 2.5;
+          });
+        }
+        });
+    }
+    else {
+      d3.selectAll('g.links line')
+.each(function(d: any) {
+const temp = d3.select(this);
+const str = temp.attr('link');
+let split = str.split(' ', 2);
+if (split[1] === key || split[0] === key) {
+      temp.style('display', 'none');
+      d3.selectAll('g.nodes').each(function(){
+        const tem = d3.select(this);
+        const temp1 = tem.select('.wrapperDiv');
+        const div = temp1.select('.wrapperDiv .title');
+        if (div.text() === key) {
+          tem.style('display', 'none');
+        }
+      });
+    }
+    });
+  }
+});
+// this
+      svg.append("foreignObject")
+.attr('class', 'modalSearch')
+.attr("width", width)
+.attr("height", height)
+.style('display', 'none')
+.attr('transform', 'translate(0,0)')
+.append("xhtml:body")
+.html('<div class="tablesModal search"><div class="modalHeader"><span>Search</span><span class="icon"><img src="assets/search.png" width="30px" height="30px"></img></span></div><br><hr><div class="tablesModalContent"><div  class="modalContentHeader"><span class="modalContentHeaderTitle">Tables</span></div><div class="modalContent"><table>' + tableModel + '</table></div></div><br><hr><button class="button search">Close</button></div>');
+      d3.select('.button.search').on('click', function() {
+      d3.select('.openModal')
+      .style('display', 'none');
+      d3.select('.modalSearch')
+      .style('display', 'none');
+
+});
+
+      d3.selectAll('.tablesModal.search .modalContent input').on('click', function() {
+        let check: any = d3.select(this);
+        let key = check.node().id;
+        if (check.node().checked) {
+          d3.selectAll('g.nodes')
+          .each(function(d: any) {
+            const temp = d3.select(this);
+            const div = temp.select('.wrapperDiv .title');
+            if (div.text() === key) {
+              d.fx = width / 2;
+              d.fy = height / 2;
+              simulation.alphaTarget(0.1).restart();
+              setTimeout(function() {
+                d.fx = null;
+                d.fy = null;
+                simulation.alphaTarget(0);
+              }, 4000);
+            }
+          });
+          svg.transition()
+        .duration(1000)
+        .call(zoom.transform,
+          d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(0.6)
+          .translate( -(width / 2) , -(height / 2) )
+        );
+        } else {
+            }
+          });
+      svg.transition()
+      .duration(1000)
+      .call(zoom.transform,
+        d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(0.3)
+        .translate( -(width / 2) , -(height / 2) )
+      );
+      svg.append("foreignObject")
+.attr('class', 'modalSelect')
+.attr("width", width)
+.attr("height", height)
+.attr('transform', 'translate(0,0)')
+.style('display', 'none')
+.append("xhtml:body")
+.html('');
+      textsAndNodes.on('click', function() {
+        console.log('Yess');
+        const temp = d3.select(this);
+        const wrapper = temp.select('.wrapperDiv');
+        const title = wrapper.select('.title').text();
+        selectionModal(title);
+});
+      function selectionModal(title) {
+        let  tableContentField = '';
+        let tableContentRelationship = '';
+        for (let node of graph.nodes) {
+          if (node.name === title) {
+            for (let key of node.keys) {
+              tableContentField += '<tr><td class="tableRowModal" style="padding-left: 25px">' + key.name + '</td><td class="tableRowModal" style="text-align: center;">' + key.dataType + '</td></tr>';
             }
           }
         }
-        else if (selectedTable) {
-          for (let node of graph.nodes) {
-            if (node.name === selectedTable) {
-              node.x = width / 2;
-              node.y = height / 2;
-              break;
-            }
+        for (const Glink of graph.links) {
+          if (Glink.source['name'] === title || Glink.target['name'] === title) {
+            // tslint:disable-next-line: max-line-length
+            tableContentRelationship += '<tr class="selectionRow"><td class="tableRowModal source" style="padding-left: 25px">' + Glink.source['name'] + '</td><td class="tableRowModal" style="text-align: center;"><i> ' + Glink.relationship + '</i> </td><td class="tableRowModal target" style="text-align: center;">' + Glink.target['name'] + '</td></tr>';
           }
-        }*/
+        }
+        d3.select('.openModal')
+          .style('display', 'block');
+        d3.select('.modalSelect').style('display', 'block');
+        d3.select('.modalSelect').html('<div class="tablesModalSelect"><div  class="modalHeader"><span>' + title + '</span><span class="icon"><img src="assets/database.png" width="30px" height="30px"></img></span></div><br><hr><div class="modalContainer"><div class="tablesModalSelectContent"><div  class="modalContentHeader"><span class="modalContentHeaderTitle">Attributes</span></div><div class="modalContent"><table>' + tableContentField + '</table></div></div><br><hr><div class="tablesModalSelectContent"><div  class="modalContentHeader"><span class="modalContentHeaderTitle">Relationships</span></div><div class="modalContent"><table>' + tableContentRelationship + '</table></div></div></div><br><button class="button select">Close</button></div>');
+        d3.select('.button.select').on('click', function() {
+          d3.select('.openModal')
+          .style('display', 'none');
+          d3.select('.modalSelect')
+          .style('display', 'none');
+      });
+        d3.selectAll('.selectionRow').on('click', function() {
+          masterKey = [];
+          slaveKey = [];
+          d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
+          const temp = d3.select(this);
+          const source = temp.select('.tableRowModal.source').text();
+          const target = temp.select('.tableRowModal.target').text();
+          console.log(source, target);
+          d3.selectAll('.links line').each(function() {
+            const selectedLink = d3.select(this);
+            let split = selectedLink.attr('link').split(' ', 2);
+            // tslint:disable-next-line: max-line-length
+            if ((split[0] === source || split[1] === source) && (split[0] === target || split[1] === target) ) {
+              let newText = navBar.select('.navBar');
+              // tslint:disable-next-line: max-line-length
+              newText.html('<span class="selectedTable">ERD-D3</span><span class="relationType">Relationship : ' + selectedLink.attr('relationship') + '</span><span class="joinType">Join Type : ' + selectedLink.attr('joinType') + ' Join</span>');
+              let tempp = selectedLink.attr('masterkey');
+              let temp1 = tempp.split(',', 2);
+              masterKey.push(temp1[0]);
+              masterKey.push(temp1[1]);
+              tempp = selectedLink.attr('slavekey');
+              temp1 = tempp.split(',', 2);
+              slaveKey.push(temp1[0]);
+              slaveKey.push(temp1[1]);
+            }
+          });
+          console.log(masterKey, slaveKey);
+          let x = 0;
+          let y = 0;
+          d3.selectAll('g.nodes')
+          .each(function(d: any) {
+            const temp1: any = d3.select(this);
+            const tem = temp1.select('.wrapperDiv');
+            const div = temp1.select('.title');
+            if (div.text() === source || div.text() === target) {
+            x += d.x ;
+            y += d.y ;
+            const content = tem.select('.divContent');
+            content.selectAll('.tableRow')
+            .each(function(){
+              let tableRow = d3.select(this);
+              let text = tableRow.select('.fieldname').text();
+
+              if (masterKey.includes(text) || slaveKey.includes(text)) {
+                tableRow.style('font-weight', 'bold')
+                .style('font-size', '16px');
+
+            }
+
+            });
+            }
+          });
+          d3.select('.openModal')
+          .style('display', 'none');
+          d3.select('.modalSelect')
+          .style('display', 'none');
+          svg.transition()
+          .duration(1000)
+          .call(zoom.transform,
+            d3.zoomIdentity
+            .translate(width / 2, height / 2)
+            .scale(0.8)
+            .translate( -(x / 2) , -(y / 2) )
+          );
+
+        });
+      }
+      setTimeout(function() {
+          simulation.force('collide', d3.forceCollide(140).strength(0.8));
+        }, 1400);
+      function ticked() {
         textsAndNodes
         .attr('transform', function(d){
-          let str = 'translate(' + (d.x - 50) + ',' + (d.y - 50) + ')';
+          let str = 'translate(' + (d.x - 160) + ',' + (d.y - 100) + ')';
           return str;
         });
         link
