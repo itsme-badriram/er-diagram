@@ -1,11 +1,12 @@
-import { Component, OnInit, AfterContentChecked, ChangeDetectionStrategy } from '@angular/core';
-import { Node, Edge, ClusterNode, Layout } from '@swimlane/ngx-graph';
+import { Component, OnInit, AfterContentChecked, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Node, Edge, ClusterNode, Layout, DagreLayout, Orientation } from '@swimlane/ngx-graph';
 import { nodes, clusters, links } from './data';
 import { forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force';
 import { D3ForceDirectedLayout } from '@swimlane/ngx-graph';
 import { Subject } from 'rxjs';
 import * as d3 from 'd3';
-
+import { MatDialog } from '@angular/material/dialog';
+import { ModalDialogComponent } from './modal-dialog/modal-dialog.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -13,6 +14,10 @@ import * as d3 from 'd3';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
+  constructor(public dialog: MatDialog) {
+  }
+  zoom = 0.3;
+  zoomSpeed: number = 0.1;
   panelOpenState = false;
   name = 'NGX-Graph Demo';
   modals = [];
@@ -21,10 +26,11 @@ export class AppComponent implements OnInit {
   slaveTable: string = null;
   masterKey = [];
   slaveKey = [];
-  layout: Layout = new D3ForceDirectedLayout();
+  //layout: Layout = new D3ForceDirectedLayout();
+  layout: Layout = new DagreLayout();
   nodes: Node[] = nodes;
   links: Edge[] = links;
-  draggingEnabled: boolean = true;
+  draggingEnabled: boolean = false;
   panningEnabled: boolean = true;
   zoomEnabled: boolean = true;
   panOnZoom: boolean = true;
@@ -33,22 +39,28 @@ export class AppComponent implements OnInit {
   update$: Subject<boolean> = new Subject();
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
-
+  panToNode$: Subject<string> = new Subject();
+  select(node: any) {
+    let dialogRef = this.dialog.open(ModalDialogComponent, {
+      data: node
+    });
+}
   ngOnInit() {
     for (const node of nodes) {
       this.modals.push(node.id);
     }
     console.log(this.modals);
-    this.layout.settings = {
+    
+    /*this.layout.settings = {
       force: forceSimulation<any>().force('charge', forceManyBody().strength(-25)).force('collide', forceCollide(250).strength(0.5)),
       forceLink: forceLink<any, any>()
       .id(node => node.id)
       .distance(() => 500)
-    };
+    };*/
 
   }
   setModal(event) {
-    console.log(event);
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
     this.relations = [];
     this.masterKey = [];
     this.slaveKey = [];
@@ -65,6 +77,7 @@ export class AppComponent implements OnInit {
       }
     }
     const svg = d3.select('svg');
+    const graph = d3.select('.graph.chart');
     const g = d3.select('g.nodes');
     const gg = d3.select('g.links');
     let zoom: any = d3.zoom()
@@ -72,6 +85,10 @@ export class AppComponent implements OnInit {
     .scaleExtent([0, 8])
     .on('zoom', zoomed);
     function zoomed() {
+      const attr = graph.attr('transform');
+      const str = attr.split('matrix(', 2)[1];
+      const value = str.split(',', 6);
+      // tslint:disable-next-line: max-line-length
       g.attr('transform', d3.event.transform);
       gg.attr('transform', d3.event.transform);
     }
@@ -89,8 +106,9 @@ export class AppComponent implements OnInit {
       .duration(1000)
       .call(zoom.transform,
         d3.zoomIdentity
-        .scale(1.7)
-        .translate( -(xPos) , -(yPos)));
+        .scale(1.3)
+        .translate( -(xPos) , -(yPos) )
+      );
 
       }
       else {
@@ -99,7 +117,6 @@ export class AppComponent implements OnInit {
     });
   }
   setRelation(event) {
-    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
     if (this.masterTable === null) {
       this.masterTable = event;
     }

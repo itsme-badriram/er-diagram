@@ -54,10 +54,14 @@
   [center$]="center$"
   [zoomToFit$]="zoomToFit$"
   [enableZoom]="zoomEnabled"
+  [panToNode$]="panToNode$"
+  [zoomLevel]="zoom"
+  [zoomSpeed]="zoomSpeed"
+  [panOnZoom]="panOnZoom"
+  [draggingEnabled]="draggingEnabled"
 >
-
 <ng-template #nodeTemplate let-node>
-  <svg:g class="node">
+  <svg:g class="node" (click)="select(node)">
     <svg:foreignObject width="320" height="200">
       <xhtml:body>
         <div class="wrapperDiv">

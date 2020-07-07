@@ -13,6 +13,10 @@ export const nodes: Node[] = [
         {name : 'key_23', type : 'field', dataType: 'integer'},
         {name : 'key_1', type : 'field', dataType: 'double'},
         {name : 'key_2', type : 'field', dataType: 'string'},
+        {name : 'key_23', type : 'field' , dataType: 'integer'},
+        {name : 'key_23', type : 'field', dataType: 'integer'},
+        {name : 'key_1', type : 'field', dataType: 'double'},
+        {name : 'key_2', type : 'field', dataType: 'string'},
         {name : 'key_23', type : 'field' , dataType: 'integer'}
       ]
     }

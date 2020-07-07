@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Modal: {{ node.id }}</h2>
+  <mat-tab-group>
+  <mat-tab label="Attributes">
+    <mat-dialog-content>
+      <br>
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Field Name </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="dataType">
+        <mat-header-cell *matHeaderCellDef> Data Type </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.dataType}} </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </mat-dialog-content>
+  <br>
+  <mat-divider></mat-divider>
+  </mat-tab>
+  <mat-tab label="Relationship">
+    <mat-dialog-content>
+      <br>
+    <mat-table [dataSource]="relationships" class="mat-elevation-z8">
+      <ng-container matColumnDef="source">
+        <mat-header-cell *matHeaderCellDef> Master Table </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.source}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="relationship">
+        <mat-header-cell *matHeaderCellDef> Relationship </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.relationship}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="target">
+        <mat-header-cell *matHeaderCellDef> Slave Table </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.target}} </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="relationshipColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: relationshipColumns;"></mat-row>
+    </mat-table>
+  </mat-dialog-content>
+  <br>
+  <mat-divider></mat-divider>
+  </mat-tab>
+</mat-tab-group>
+
