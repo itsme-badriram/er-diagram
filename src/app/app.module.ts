@@ -19,12 +19,14 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
+import { LinkDialogComponent } from './link-dialog/link-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ModalDialogComponent
+    ModalDialogComponent,
+    LinkDialogComponent
   ],
-  entryComponents: [ ModalDialogComponent ],
+  entryComponents: [ ModalDialogComponent, LinkDialogComponent ],
   imports: [
     FormsModule,
     BrowserModule,

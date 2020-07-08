@@ -3,14 +3,14 @@
     <h2>Configuration</h2>
     <form class="settings">
       <mat-form-field>
-        <mat-select placeholder="Modal" [ngModel]="modals" (ngModelChange)="setModal($event)" name="modal">
+        <mat-select placeholder="Modal" [ngModel]="source" (ngModelChange)="setModal($event)" name="modal">
           <mat-option *ngFor="let m of modals"  [value]="m">
             {{m}}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field *ngIf="relations.length > 0" >
-        <mat-select  placeholder="Relations" [ngModel]="relations" (ngModelChange)="setRelation($event)" name="relation">
+        <mat-select  placeholder="Relations" [ngModel]="target" (ngModelChange)="setRelation($event)" name="relation">
           <mat-option *ngFor="let m of relations"  [value]="m">
             {{m}}
           </mat-option>
@@ -34,6 +34,23 @@
             <mat-label>Slave Table</mat-label>
             <input class="matInput" matInput [value]="slaveTable" disabled>
           </mat-form-field>
+          <mat-form-field class="example-full-width">
+            <mat-label>Join Type</mat-label>
+            <input class="matInput" matInput [value]="joinType" disabled>
+          </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <br>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              Filter Modals
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div *ngFor='let modal of modals'>
+            <input type='checkbox' name='{{modal}}' value='{{modal}}' (change)='getModals($event, modal)' checked>{{modal}}
+          </div>
         </mat-expansion-panel>
       </mat-accordion>
 
@@ -61,7 +78,7 @@
   [draggingEnabled]="draggingEnabled"
 >
 <ng-template #nodeTemplate let-node>
-  <svg:g class="node" (click)="select(node)">
+  <svg:g class="node" (click)="selectedNode(node)">
     <svg:foreignObject width="320" height="200">
       <xhtml:body>
         <div class="wrapperDiv">
@@ -83,8 +100,8 @@
   </svg:g>
 </ng-template>
 <ng-template #linkTemplate let-link>
-  <svg:g class="edge">
-    <svg:path class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" stroke-opacity="0.6">
+  <svg:g class="edge" (click)="selectedLink(link)">
+    <svg:path class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
     </svg:path>
     <svg:text class="edge-label" text-anchor="middle" dy="15" >
       <textPath class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >

@@ -1,11 +1,71 @@
 mat-table {
   margin-left: 20px;
+  width: 500px;
+}
+mat-accordion {
+  padding: 10px;
+}
+mat-expansion-panel {
+  margin-left: 10px;
   width: 400px;
 }
+mat-panel-title {
+  width: 100px;
+}
+mat-header-cell, th {
+  color: #3f51b5;
+}
+mat-list-item {
+  height: 30px;
+}
+.btnkeys {
+  right: 40px;
+}
+.listItem {
+  color: #3f51b5;
+}
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+
+}
+
+th {
+  text-align: left;
+}
+tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+th, td {
+  padding: 15px;
+}
+table {
+  border-collapse: collapse;
+  padding: 10px;
+  width: 500px;
+  margin-left: 20px;
+
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
 mat-tab-group {
-  width: 450px;
+  width: 550px;
 }
 mat-dialog-content {
-  width: 420px;
+  width: 520px;
 }
 

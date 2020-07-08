@@ -8,12 +8,16 @@ svg {
   height: 100vh;
   overflow: hidden;
 }
+.node, .edge {
+  cursor: pointer;
+}
 .sidebar {
   background: #efefef;
   padding: 10px;
 }
 .matInput{
   color: black;
+  padding: 3px;
 }
 mat-label {
   color: #3f51b5;

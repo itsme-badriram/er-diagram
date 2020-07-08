@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Link</h2>
+<mat-dialog-content>
+  <mat-form-field class="example-full-width">
+    <mat-label>Master Table</mat-label>
+    <input class="matInput" matInput [value]="link.source" disabled>
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <mat-label>Slave Table</mat-label>
+    <input class="matInput" matInput [value]="link.target" disabled>
+  </mat-form-field>
+  <div class="container">
+  <mat-form-field class="example-full-width">
+    <mat-label>Master Keys</mat-label>
+    <input class="matInput" matInput [value]="link.data.masterkey" disabled>
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <mat-label>Slave Keys</mat-label>
+    <input class="matInput" matInput [value]="link.data.slavekey" disabled>
+  </mat-form-field>
+</div>
+<div>
+  <mat-form-field class="example-full-width">
+    <mat-label>Relationship</mat-label>
+    <input class="matInput" matInput [value]="link.data.relationship" disabled>
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <mat-label>Join Type</mat-label>
+    <input class="matInput" matInput [value]="link.data.joinType" disabled>
+  </mat-form-field>
+</div>
+<div class="btns">
+  <button mat-raised-button  color="primary"  class="buttonbtn" (click)="onClose()">Close</button>
+  <button mat-stroked-button color="primary" [mat-dialog-close]="link"  class="buttonbtn" >View In Diagram</button>
+  </div>
+</mat-dialog-content>

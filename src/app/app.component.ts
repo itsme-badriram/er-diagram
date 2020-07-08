@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 import * as d3 from 'd3';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalDialogComponent } from './modal-dialog/modal-dialog.component';
+import { LinkDialogComponent } from './link-dialog/link-dialog.component';
+import { IfStmt } from '@angular/compiler';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,22 +16,29 @@ import { ModalDialogComponent } from './modal-dialog/modal-dialog.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, public linkdialog: MatDialog) {
   }
-  zoom = 0.3;
-  zoomSpeed: number = 0.1;
   panelOpenState = false;
   name = 'NGX-Graph Demo';
   modals = [];
   relations = [];
+  source: string;
+  target: string;
   masterTable: string;
   slaveTable: string = null;
+  joinType: string;
+  relationship: string;
   masterKey = [];
   slaveKey = [];
+  removedTables = [];
   //layout: Layout = new D3ForceDirectedLayout();
   layout: Layout = new DagreLayout();
+  originalNodes: Node[] = nodes;
+  originalLinks: Edge[] = links;
   nodes: Node[] = nodes;
   links: Edge[] = links;
+
+  // Graph Configuration
   draggingEnabled: boolean = false;
   panningEnabled: boolean = true;
   zoomEnabled: boolean = true;
@@ -40,42 +49,81 @@ export class AppComponent implements OnInit {
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
   panToNode$: Subject<string> = new Subject();
-  select(node: any) {
+  zoom = 0.3;
+  zoomSpeed: number = 0.1;
+
+  selectedNode(node: any) {
     let dialogRef = this.dialog.open(ModalDialogComponent, {
       data: node
     });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.setInputs(result['Master Table']);
+        this.masterTable = result['Master Table'];
+        this.slaveTable = result['Slave Table'];
+        this.source = result['Master Table'];
+        this.target = result['Slave Table'];
+        this.setKeys(result['Master Table'], result['Slave Table']);
+        console.log(result);
+      }
+    });
+}
+  selectedLink(link) {
+    let dialogRef = this.linkdialog.open(LinkDialogComponent, {
+      data: link
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.setInputs(result.source);
+        this.masterTable = result.source;
+        this.slaveTable = result.target;
+        this.source = result.source;
+        this.target = result.target;
+        this.setKeys(result.source, result.target);
+        console.log(result);
+      }
+    });
+
 }
   ngOnInit() {
     for (const node of nodes) {
       this.modals.push(node.id);
     }
     console.log(this.modals);
-    
-    /*this.layout.settings = {
-      force: forceSimulation<any>().force('charge', forceManyBody().strength(-25)).force('collide', forceCollide(250).strength(0.5)),
-      forceLink: forceLink<any, any>()
-      .id(node => node.id)
-      .distance(() => 500)
-    };*/
-
+  }
+  getModals(event, modal) {
+    if (event.target.checked) {
+      this.removedTables = this.removedTables.filter(m => m !== modal);
+      const node = this.originalNodes.filter(m => (m.id === modal));
+      this.nodes = this.nodes.concat(node[0]);
+      const source = this.originalLinks.filter(m => (m.source === modal));
+      for (let temp of source) {
+        if (!this.removedTables.includes(temp.source) && !this.removedTables.includes(temp.target)) {
+          this.links = this.links.concat(temp);
+          console.log(temp);
+        }
+      }
+      const target = this.originalLinks.filter(m => (m.target === modal));
+      for (let temp of target) {
+        if (!this.removedTables.includes(temp.source) && !this.removedTables.includes(temp.target)) {
+          this.links = this.links.concat(temp);
+          console.log(temp);
+        }
+      }
+      console.log(this.removedTables);
+      console.log(this.nodes);
+      console.log(this.links);
+    }
+    else {
+      this.removedTables.push(modal);
+      this.links = this.links.filter(m => (m.source !== modal));
+      this.links = this.links.filter(m => (m.target !== modal));
+      this.nodes = this.nodes.filter(m => m.id !== modal);
+    }
   }
   setModal(event) {
     d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
-    this.relations = [];
-    this.masterKey = [];
-    this.slaveKey = [];
-    for (const link of links) {
-      if (link.source === event) {
-        this.masterTable = event;
-        this.slaveTable = null;
-        this.relations.push(link.target);
-      }
-      if (link.target === event) {
-        this.slaveTable = event;
-        this.masterTable = null;
-        this.relations.push(link.source);
-      }
-    }
+    this.setInputs(event);
     const svg = d3.select('svg');
     const graph = d3.select('.graph.chart');
     const g = d3.select('g.nodes');
@@ -116,6 +164,23 @@ export class AppComponent implements OnInit {
       }
     });
   }
+  setInputs(event) {
+    this.relations = [];
+    this.masterKey = [];
+    this.slaveKey = [];
+    for (const link of links) {
+      if (link.source === event) {
+        this.masterTable = event;
+        this.slaveTable = null;
+        this.relations.push(link.target);
+      }
+      if (link.target === event) {
+        this.slaveTable = event;
+        this.masterTable = null;
+        this.relations.push(link.source);
+      }
+    }
+  }
   setRelation(event) {
     if (this.masterTable === null) {
       this.masterTable = event;
@@ -123,10 +188,16 @@ export class AppComponent implements OnInit {
     else {
       this.slaveTable = event;
     }
-    let masterKey = [];
-    let slaveKey = [];
+
     let source = this.masterTable;
     let target = this.slaveTable;
+    this.setKeys(source, target);
+  }
+  setKeys(source , target) {
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
+    let masterKey = [];
+    let slaveKey = [];
+    let joinType;
     d3.selectAll('.link-group .edge path')
     .each(function() {
       const path = d3.select(this);
@@ -134,6 +205,7 @@ export class AppComponent implements OnInit {
       // tslint:disable-next-line: max-line-length
       let source: string = split[0];
       if ((split[0] === source || split[1] === source) && (split[0] === target || split[1] === target) ) {
+        joinType = path.attr('joinType');
         let temp = path.attr('masterkey');
         let temp1 = temp.split(',', 2);
         masterKey.push(temp1[0]);
@@ -144,6 +216,7 @@ export class AppComponent implements OnInit {
         slaveKey.push(temp1[1]);
     }
   });
+    this.joinType = joinType;
     this.masterKey = [...masterKey];
     this.slaveKey = [...slaveKey];
     console.log(this.masterKey, this.slaveKey);
