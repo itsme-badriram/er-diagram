@@ -20,7 +20,34 @@ export const nodes: Node[] = [
         {name : 'key_23', type : 'field' , dataType: 'integer'}
       ]
     }
-  }, {
+  },
+  {
+    id: 'table_211',
+    label: 'table_2',
+    data: {
+      type: 'table',
+      keys: [
+        {name : 'accountkey', type : 'foreign_key', dataType: 'number'},
+        {name : 'reporting_month', type : 'foreign_key' , dataType: 'string'},
+        {name : 'key_3', type : 'field', dataType: 'integer'},
+        {name : 'key_4', type : 'field', dataType: 'double'}
+      ]
+    }
+  },
+  {
+    id: 'table_212',
+    label: 'table_2',
+    data: {
+      type: 'table',
+      keys: [
+        {name : 'accountkey', type : 'foreign_key', dataType: 'number'},
+        {name : 'reporting_month', type : 'foreign_key' , dataType: 'string'},
+        {name : 'key_3', type : 'field', dataType: 'integer'},
+        {name : 'key_4', type : 'field', dataType: 'double'}
+      ]
+    }
+  },
+  {
     id: 'table_2',
     label: 'table_2',
     data: {
@@ -137,6 +164,29 @@ export const links: Edge[] = [
     id: 'a',
     source: 'dbm_mrd_btl',
     target: 'table_2',
+    label: 'is parent of',
+    data: {
+      relationship: 'OneToOne',
+      joinType : 'Left',
+      masterkey: 'accountkey,reporting_month',
+      slavekey: 'accountkey,reporting_month'
+    }
+  },
+  {
+    id: 'aba',
+    source: 'dbm_mrd_btl',
+    target: 'table_211',
+    label: 'is parent of',
+    data: {
+      relationship: 'OneToOne',
+      joinType : 'Left',
+      masterkey: 'accountkey,reporting_month',
+      slavekey: 'accountkey,reporting_month'
+    }
+  },{
+    id: 'abac',
+    source: 'dbm_mrd_btl',
+    target: 'table_212',
     label: 'is parent of',
     data: {
       relationship: 'OneToOne',

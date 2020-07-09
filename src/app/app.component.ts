@@ -8,7 +8,6 @@ import * as d3 from 'd3';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalDialogComponent } from './modal-dialog/modal-dialog.component';
 import { LinkDialogComponent } from './link-dialog/link-dialog.component';
-import { IfStmt } from '@angular/compiler';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -22,7 +21,7 @@ export class AppComponent implements OnInit {
   name = 'NGX-Graph Demo';
   modals = [];
   relations = [];
-  source: string;
+  source: string = null;
   target: string;
   masterTable: string;
   slaveTable: string = null;
@@ -31,6 +30,7 @@ export class AppComponent implements OnInit {
   masterKey = [];
   slaveKey = [];
   removedTables = [];
+  unselectAll = false;
   //layout: Layout = new D3ForceDirectedLayout();
   layout: Layout = new DagreLayout();
   originalNodes: Node[] = nodes;
@@ -43,8 +43,8 @@ export class AppComponent implements OnInit {
   panningEnabled: boolean = true;
   zoomEnabled: boolean = true;
   panOnZoom: boolean = true;
-  autoZoom: boolean = false;
-  autoCenter: boolean = false;
+  autoZoom: boolean = true;
+  autoCenter: boolean = true;
   update$: Subject<boolean> = new Subject();
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
@@ -87,38 +87,93 @@ export class AppComponent implements OnInit {
 }
   ngOnInit() {
     for (const node of nodes) {
-      this.modals.push(node.id);
+      let element = {
+        name: node.id,
+        checked: true
+      };
+      this.modals.push(element);
     }
-    console.log(this.modals);
   }
-  getModals(event, modal) {
-    if (event.target.checked) {
-      this.removedTables = this.removedTables.filter(m => m !== modal);
-      const node = this.originalNodes.filter(m => (m.id === modal));
-      this.nodes = this.nodes.concat(node[0]);
-      const source = this.originalLinks.filter(m => (m.source === modal));
-      for (let temp of source) {
-        if (!this.removedTables.includes(temp.source) && !this.removedTables.includes(temp.target)) {
-          this.links = this.links.concat(temp);
-          console.log(temp);
-        }
+  onInfo(modal) {
+    console.log(modal);
+    this.panelOpenState = false;
+    this.source = modal;
+    this.setInputs(modal);
+    console.log(this.relations);
+
+  }
+  checkAll() {
+    this.source = null;
+    if (this.unselectAll) {
+      for (const m of this.modals) {
+        m.checked = false;
+        this.removeTable(m.name);
       }
-      const target = this.originalLinks.filter(m => (m.target === modal));
-      for (let temp of target) {
-        if (!this.removedTables.includes(temp.source) && !this.removedTables.includes(temp.target)) {
-          this.links = this.links.concat(temp);
-          console.log(temp);
-        }
+    }
+    else {
+      for (const m of this.modals) {
+        m.checked = true;
+        this.backToLife(m.name);
       }
+    }
+  }
+  showRelations(modal) {
+    this.source = null;
+    this.setInputs(modal);
+    for (const rel of this.relations) {
+      const element = this.modals.filter(m => m.name === rel.name)[0];
+      if (!element.checked) {
+        this.backToLife(element.name);
+        element.checked = true;
+      }
+    }
+  }
+  getRelations(modal) {
+    if (modal.checked) {
+      this.backToLife(modal.name);
+    }
+    else {
+      this.removeTable(modal.name);
+    }
+    let element = this.modals.filter(m => m.name === modal.name)[0];
+    element.checked = !element.checked;
+  }
+  getModals(modal) {
+    this.source = null;
+    console.log('GetModals');
+    if (modal.checked) {
+      this.backToLife(modal.name);
       console.log(this.removedTables);
       console.log(this.nodes);
       console.log(this.links);
     }
     else {
-      this.removedTables.push(modal);
-      this.links = this.links.filter(m => (m.source !== modal));
-      this.links = this.links.filter(m => (m.target !== modal));
-      this.nodes = this.nodes.filter(m => m.id !== modal);
+      this.removeTable(modal.name);
+    }
+  }
+  removeTable(modal) {
+    this.removedTables.push(modal);
+    this.links = this.links.filter(m => (m.source !== modal));
+    this.links = this.links.filter(m => (m.target !== modal));
+    this.nodes = this.nodes.filter(m => m.id !== modal);
+  }
+  backToLife(modal) {
+    this.removedTables = this.removedTables.filter(m => m !== modal);
+    const node = this.originalNodes.filter(m => (m.id === modal));
+    this.nodes = this.nodes.concat(node[0]);
+    const source = this.originalLinks.filter(m => (m.source === modal));
+    for (let temp of source) {
+      if (!this.removedTables.includes(temp.source) && !this.removedTables.includes(temp.target)) {
+        this.links = this.links.concat(temp);
+        console.log(temp);
+      }
+    }
+    const target = this.originalLinks.filter(m => (m.target === modal));
+    for (let temp of target) {
+      if (!this.removedTables.includes(temp.source) && !this.removedTables.includes(temp.target)) {
+        this.links = this.links.concat(temp);
+        console.log(temp);
+      }
     }
   }
   setModal(event) {
@@ -172,12 +227,23 @@ export class AppComponent implements OnInit {
       if (link.source === event) {
         this.masterTable = event;
         this.slaveTable = null;
-        this.relations.push(link.target);
+        let table = this.modals.filter(m => m.name === link.target)[0];
+        console.log(table);
+        let element = {
+          name: link.target,
+          checked: table.checked
+        };
+        this.relations.push(element);
       }
       if (link.target === event) {
         this.slaveTable = event;
         this.masterTable = null;
-        this.relations.push(link.source);
+        let table = this.modals.filter(m => m.name === link.source)[0];
+        let element = {
+          name: link.source,
+          checked: table.checked
+        };
+        this.relations.push(element);
       }
     }
   }
@@ -242,4 +308,3 @@ export class AppComponent implements OnInit {
   }
 
 }
-

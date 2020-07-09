@@ -2,55 +2,57 @@
   <mat-drawer mode="side" opened class="sidebar">
     <h2>Configuration</h2>
     <form class="settings">
-      <mat-form-field>
-        <mat-select placeholder="Modal" [ngModel]="source" (ngModelChange)="setModal($event)" name="modal">
-          <mat-option *ngFor="let m of modals"  [value]="m">
-            {{m}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field *ngIf="relations.length > 0" >
-        <mat-select  placeholder="Relations" [ngModel]="target" (ngModelChange)="setRelation($event)" name="relation">
-          <mat-option *ngFor="let m of relations"  [value]="m">
-            {{m}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-accordion *ngIf="masterTable != null && slaveTable != null">
-        <mat-expansion-panel (opened)="panelOpenState = true"
-                             (closed)="panelOpenState = false">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-            </mat-panel-title>
-            <mat-panel-description>
-              Relationship Details
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <mat-form-field class="example-full-width">
-            <mat-label>Master Table</mat-label>
-            <input class="matInput" matInput [value]="masterTable" disabled>
-          </mat-form-field>
-          <mat-form-field class="example-full-width">
-            <mat-label>Slave Table</mat-label>
-            <input class="matInput" matInput [value]="slaveTable" disabled>
-          </mat-form-field>
-          <mat-form-field class="example-full-width">
-            <mat-label>Join Type</mat-label>
-            <input class="matInput" matInput [value]="joinType" disabled>
-          </mat-form-field>
-        </mat-expansion-panel>
-      </mat-accordion>
-      <br>
+
       <mat-accordion>
-        <mat-expansion-panel>
+        <mat-expansion-panel [(expanded)] = "panelOpenState">
           <mat-expansion-panel-header>
             <mat-panel-description>
-              Filter Modals
+              Tables
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <div *ngFor='let modal of modals'>
-            <input type='checkbox' name='{{modal}}' value='{{modal}}' (change)='getModals($event, modal)' checked>{{modal}}
-          </div>
+          <table style="width: 250px;">
+            <tr>
+              <td class="tablename">View Relation Details</td>
+              <td class="tableDetails"><img src="../assets/info.png" width="17px" height="17px"></td>
+            </tr>
+            <tr>
+              <td class="tablename">Show All Relations</td>
+              <td class="tableDetails"><img src="../assets/right-arrow.png" width="17px" height="17px"></td>
+            </tr>
+          </table>
+          <mat-checkbox [(ngModel)] = "unselectAll" name="unselectAll" (ngModelChange)="checkAll()">
+            Unselect All
+          </mat-checkbox>
+          <table class="tables">
+            <tr *ngFor="let modal of modals">
+              <td class="tablename">
+                <mat-checkbox [(ngModel)] = "modal.checked" [name]="modal.name" (ngModelChange)="getModals(modal)">
+                  {{modal.name}}
+                </mat-checkbox>
+              </td>
+              <td class="tableDetails" *ngIf="modal.checked">
+                <a style="cursor: pointer;" (click)="onInfo(modal.name)"><img src="../assets/info.png" width="17px" height="17px"></a>
+              </td>
+              <td class="tableRelations" *ngIf="modal.checked">
+                <a style="cursor: pointer;" (click)="showRelations(modal.name)"><img src="../assets/right-arrow.png" width="14px" height="14px"></a>
+              </td>
+            </tr>
+          </table>
+        </mat-expansion-panel>
+        <br>
+        <mat-form-field *ngIf="source != null">
+          <mat-label>Table</mat-label>
+          <input class="matInput" matInput [value]="source" disabled>
+        </mat-form-field>
+        <mat-expansion-panel *ngIf="source != null">
+          <mat-expansion-panel-header>
+            <mat-panel-description>
+              Related To
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-checkbox *ngFor="let relation of relations" [(ngModel)] = "relation.checked" [name]="relation.name"  (ngModelChange)="getRelations(relation)">
+            {{relation.name}}
+          </mat-checkbox>
         </mat-expansion-panel>
       </mat-accordion>
 
@@ -74,11 +76,13 @@
   [panToNode$]="panToNode$"
   [zoomLevel]="zoom"
   [zoomSpeed]="zoomSpeed"
+  [autoZoom]="autoZoom"
+  [autoCenter]="autoCenter"
   [panOnZoom]="panOnZoom"
   [draggingEnabled]="draggingEnabled"
 >
 <ng-template #nodeTemplate let-node>
-  <svg:g class="node" (click)="selectedNode(node)">
+  <svg:g class="node" (click)="selectedNode(node)" >
     <svg:foreignObject width="320" height="200">
       <xhtml:body>
         <div class="wrapperDiv">
@@ -100,10 +104,10 @@
   </svg:g>
 </ng-template>
 <ng-template #linkTemplate let-link>
-  <svg:g class="edge" (click)="selectedLink(link)">
-    <svg:path class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
+  <svg:g class="edge" (click)="selectedLink(link)" >
+    <svg:path   class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
     </svg:path>
-    <svg:text class="edge-label" text-anchor="middle" dy="15" >
+    <svg:text ngx-tooltip  [tooltipType]="'tooltip'" [tooltipTitle]="link.source + ': '+link.data.masterkey + ' - ' + link.data.joinType + 'Join - ' + link.target + ': '+link.data.slavekey" class="edge-label" text-anchor="middle" dy="15" >
       <textPath class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
         {{link.data.relationship}}
       </textPath>

@@ -20,6 +20,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
 import { LinkDialogComponent } from './link-dialog/link-dialog.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +46,8 @@ import { LinkDialogComponent } from './link-dialog/link-dialog.component';
     MatTableModule,
     MatTabsModule,
     MatDividerModule,
-    MatListModule
+    MatListModule,
+    NgxChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

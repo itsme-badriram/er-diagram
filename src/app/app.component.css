@@ -19,9 +19,6 @@ svg {
   color: black;
   padding: 3px;
 }
-mat-label {
-  color: #3f51b5;
-}
 mat-expansion-panel {
   background: #efefef;
 }
@@ -216,9 +213,32 @@ hr {
   align-items: center;
   margin-top: 3px ;
 }
-
+ul {
+  list-style-type: none;
+  margin-top: 4px;
+  padding: 0px;
+}
+mat-checkbox {
+  margin-top: 10px;
+}
+.legend {
+  padding-right: 10px;
+  margin-bottom: 20px;
+}
+.tables {
+  width: 300px;
+}
+.tableDetails {
+  width: 20px;
+}
+.tableRelations {
+  width: 20px;
+}
+.tablename {
+  width: 150px;
+}
 .divContent {
-  height: 120px;
+  height: 135px;
   overflow-y: auto;
   background-color: whitesmoke;
   color: black;

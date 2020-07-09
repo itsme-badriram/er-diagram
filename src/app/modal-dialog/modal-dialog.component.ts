@@ -23,7 +23,7 @@ export class ModalDialogComponent implements OnInit {
   dataSource: any;
   links: Edge[] = links;
   relationships: any;
-  relationshipColumns: string[] = ['Master Table', 'Relationship' , 'Slave Table'];
+  relationshipColumns: string[] = ['Table', 'Relationship' , 'Related Table'];
   expandedElement: any;
   onClose() {
     this.dialogRef.close();
@@ -34,20 +34,20 @@ export class ModalDialogComponent implements OnInit {
     for (const link of links) {
       if (link.source === this.node.id || link.target === this.node.id) {
         let relationship = {
-          'Master Table': '',
+          'Table': '',
           Relationship : '',
-          'Slave Table' : '',
+          'Related Table' : '',
           'Master Key' : [],
           'Slave Key' : [],
           'Join Type' : ''
         };
         if (link.source === this.node.id) {
-          relationship['Master Table'] = this.node.id;
-          relationship['Slave Table'] = link.target;
+          relationship['Table'] = this.node.id;
+          relationship['Related Table'] = link.target;
         }
         else if (link.target === this.node.id) {
-          relationship['Master Table'] = this.node.id;
-          relationship['Slave Table'] = link.target;
+          relationship['Table'] = this.node.id;
+          relationship['Related Table'] = link.source;
         }
         let split = link.data.masterkey.split(',', 2);
         relationship['Master Key'].push(split[0]);
