@@ -35,7 +35,59 @@ export const nodes: Node[] = [
     }
   },
   {
+    id: 'table_2111',
+    label: 'table_2',
+    data: {
+      type: 'table',
+      keys: [
+        {name : 'accountkey', type : 'foreign_key', dataType: 'number'},
+        {name : 'reporting_month', type : 'foreign_key' , dataType: 'string'},
+        {name : 'key_3', type : 'field', dataType: 'integer'},
+        {name : 'key_4', type : 'field', dataType: 'double'}
+      ]
+    }
+  },
+  {
+    id: 'table_2112',
+    label: 'table_2',
+    data: {
+      type: 'table',
+      keys: [
+        {name : 'accountkey', type : 'foreign_key', dataType: 'number'},
+        {name : 'reporting_month', type : 'foreign_key' , dataType: 'string'},
+        {name : 'key_3', type : 'field', dataType: 'integer'},
+        {name : 'key_4', type : 'field', dataType: 'double'}
+      ]
+    }
+  },
+  {
     id: 'table_212',
+    label: 'table_2',
+    data: {
+      type: 'table',
+      keys: [
+        {name : 'accountkey', type : 'foreign_key', dataType: 'number'},
+        {name : 'reporting_month', type : 'foreign_key' , dataType: 'string'},
+        {name : 'key_3', type : 'field', dataType: 'integer'},
+        {name : 'key_4', type : 'field', dataType: 'double'}
+      ]
+    }
+  },
+  {
+    id: 'table_2121',
+    label: 'table_2',
+    data: {
+      type: 'table',
+      keys: [
+        {name : 'accountkey', type : 'foreign_key', dataType: 'number'},
+        {name : 'reporting_month', type : 'foreign_key' , dataType: 'string'},
+        {name : 'key_3', type : 'field', dataType: 'integer'},
+        {name : 'key_4', type : 'field', dataType: 'double'}
+      ]
+    }
+  },
+  {
+    id: 'table_2122',
     label: 'table_2',
     data: {
       type: 'table',
@@ -183,8 +235,9 @@ export const links: Edge[] = [
       masterkey: 'accountkey,reporting_month',
       slavekey: 'accountkey,reporting_month'
     }
-  },{
-    id: 'abac',
+  },
+  {
+    id: 'abaf',
     source: 'dbm_mrd_btl',
     target: 'table_212',
     label: 'is parent of',
@@ -194,7 +247,56 @@ export const links: Edge[] = [
       masterkey: 'accountkey,reporting_month',
       slavekey: 'accountkey,reporting_month'
     }
-  }, {
+  },
+  {
+    id: 'abaab',
+    source: 'table_211',
+    target: 'table_2111',
+    label: 'is parent of',
+    data: {
+      relationship: 'OneToOne',
+      joinType : 'Left',
+      masterkey: 'accountkey,reporting_month',
+      slavekey: 'accountkey,reporting_month'
+    }
+  },
+  {
+    id: 'abaabfg',
+    source: 'table_211',
+    target: 'table_2112',
+    label: 'is parent of',
+    data: {
+      relationship: 'OneToOne',
+      joinType : 'Left',
+      masterkey: 'accountkey,reporting_month',
+      slavekey: 'accountkey,reporting_month'
+    }
+  },
+  {
+    id: 'abacbc',
+    source: 'table_212',
+    target: 'table_2121',
+    label: 'is parent of',
+    data: {
+      relationship: 'OneToOne',
+      joinType : 'Left',
+      masterkey: 'accountkey,reporting_month',
+      slavekey: 'accountkey,reporting_month'
+    }
+  },
+  {
+    id: 'abacbcf',
+    source: 'table_212',
+    target: 'table_2122',
+    label: 'is parent of',
+    data: {
+      relationship: 'OneToOne',
+      joinType : 'Left',
+      masterkey: 'accountkey,reporting_month',
+      slavekey: 'accountkey,reporting_month'
+    }
+  },
+   {
     id: 'b',
     source: 'dbm_mrd_btl',
     target: 'table_3',

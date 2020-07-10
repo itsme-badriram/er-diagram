@@ -2,7 +2,6 @@
   <mat-drawer mode="side" opened class="sidebar">
     <h2>Configuration</h2>
     <form class="settings">
-
       <mat-accordion>
         <mat-expansion-panel [(expanded)] = "panelOpenState">
           <mat-expansion-panel-header>
@@ -20,8 +19,7 @@
               <td class="tableDetails"><img src="../assets/right-arrow.png" width="17px" height="17px"></td>
             </tr>
           </table>
-          <mat-checkbox [(ngModel)] = "unselectAll" name="unselectAll" (ngModelChange)="checkAll()">
-            Unselect All
+          <mat-checkbox [checked] = "unselectAll" [indeterminate]="someChecked()" name="unselectAll" (change)="checkAll($event.checked)">
           </mat-checkbox>
           <table class="tables">
             <tr *ngFor="let modal of modals">
@@ -39,20 +37,34 @@
             </tr>
           </table>
         </mat-expansion-panel>
+      </mat-accordion>
         <br>
         <mat-form-field *ngIf="source != null">
           <mat-label>Table</mat-label>
           <input class="matInput" matInput [value]="source" disabled>
         </mat-form-field>
-        <mat-expansion-panel *ngIf="source != null">
+      <mat-accordion>
+        <mat-expansion-panel [(expanded)] = "relationPanelOpenState" *ngIf="source != null">
           <mat-expansion-panel-header>
             <mat-panel-description>
               Related To
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <mat-checkbox *ngFor="let relation of relations" [(ngModel)] = "relation.checked" [name]="relation.name"  (ngModelChange)="getRelations(relation)">
-            {{relation.name}}
-          </mat-checkbox>
+          <table class="tables">
+            <tr *ngFor="let relation of relations">
+              <td class="tablename">
+                <mat-checkbox [(ngModel)] = "relation.checked" [name]="relation.name"  (ngModelChange)="getRelations(relation)">
+                  {{relation.name}}
+                </mat-checkbox>
+              </td>
+              <td class="tableRelations" style="font-size: 20px;">
+                {{ relation.arrow }}
+              </td>
+              <td class="tableDetails" *ngIf="relation.checked">
+                <a style="cursor: pointer;" (click)="onInfo(relation.name)"><img src="../assets/info.png" width="17px" height="17px"></a>
+              </td>
+            </tr>
+          </table>
         </mat-expansion-panel>
       </mat-accordion>
 
@@ -104,11 +116,15 @@
   </svg:g>
 </ng-template>
 <ng-template #linkTemplate let-link>
-  <svg:g class="edge" (click)="selectedLink(link)" >
-    <svg:path   class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
+  <svg:g  class="edge" (click)="selectedLink(link)" >
+    <svg:path     class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
+
     </svg:path>
-    <svg:text ngx-tooltip  [tooltipType]="'tooltip'" [tooltipTitle]="link.source + ': '+link.data.masterkey + ' - ' + link.data.joinType + 'Join - ' + link.target + ': '+link.data.slavekey" class="edge-label" text-anchor="middle" dy="15" >
-      <textPath class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
+    <svg:text  class="edge-label" text-anchor="middle" dy="15" >
+      <textPath #tooltip="matTooltip"
+      matTooltip='Info about&#13;the action'
+        matTooltipPosition="right"
+        [matTooltipClass]="'my-tooltip'" class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
         {{link.data.relationship}}
       </textPath>
     </svg:text>
