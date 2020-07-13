@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentChecked, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, AfterContentChecked, ChangeDetectionStrategy, Input, ViewEncapsulation } from '@angular/core';
 import { Node, Edge, ClusterNode, Layout, DagreLayout, Orientation } from '@swimlane/ngx-graph';
 import { nodes, clusters, links } from './data';
 import { forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force';
@@ -7,7 +7,8 @@ import { Subject } from 'rxjs';
 import * as d3 from 'd3';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalDialogComponent } from './modal-dialog/modal-dialog.component';
-import { LinkDialogComponent } from './link-dialog/link-dialog.component';
+import { FilterPipe } from './filter.pipe';
+import { Pipe, PipeTransform } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,8 +16,9 @@ import { LinkDialogComponent } from './link-dialog/link-dialog.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  constructor(public dialog: MatDialog, public linkdialog: MatDialog) {
+  constructor(public dialog: MatDialog) {
   }
+  searchText;
   relationPanelOpenState = true;
   panelOpenState = false;
   modals = [];
@@ -52,18 +54,18 @@ export class AppComponent implements OnInit {
   zoom = 0.3;
   zoomSpeed: number = 0.1;
 
+  getTooltip(link): string {
+    const masterkey = link.data.masterkey.split(',', 2);
+    const slavekey = link.data.slavekey.split(',', 2);
+    const str = link.data.joinType + ' Join \n' + masterkey[0] + ' = ' + slavekey[0] + '\n'
+     + masterkey[1] + ' = ' + slavekey[1];
+    return str;
+    }
 // Node Click
   selectedNode(node: any) {
     let dialogRef = this.dialog.open(ModalDialogComponent, {
       data: node
     });
-}
-// Link Click
-  selectedLink(link) {
-    let dialogRef = this.linkdialog.open(LinkDialogComponent, {
-      data: link
-    });
-
 }
   ngOnInit() {
     for (const node of nodes) {
@@ -76,6 +78,7 @@ export class AppComponent implements OnInit {
   }
   // On i Symbol Click
   onInfo(modal) {
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
     this.panelOpenState = false;
     this.source = modal;
     this.setInputs(modal);
@@ -84,6 +87,7 @@ export class AppComponent implements OnInit {
   }
   // Check All/ Uncheck All
   checkAll(checked) {
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
     this.source = null;
     this.unselectAll = checked;
     if (!checked) {
@@ -111,6 +115,7 @@ export class AppComponent implements OnInit {
   }
   // Show All relations from respective Table
   showRelations(modal) {
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
     d3.selectAll('.wrapperDiv').attr('style', '#0074a6');
     this.setModal(modal);
     this.source = null;
@@ -125,6 +130,8 @@ export class AppComponent implements OnInit {
   }
   // Onchange Checkbox handler to view / remove relations - for 1st Expansion Panel.
   getModals(modal) {
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
+    d3.selectAll('.wrapperDiv').attr('style', '#0074a6');
     this.source = null;
     if (modal.checked) {
       this.backToLife(modal.name);
@@ -135,6 +142,7 @@ export class AppComponent implements OnInit {
   }
   // Onchange Checkbox handler to view / remove relations. - for 2nd Expansion panel
   getRelations(modal) {
+    d3.selectAll('.tableRow').style('font-weight', 'unset').style('font-size', '14px');
     if (modal.checked) {
       this.backToLife(modal.name);
     }

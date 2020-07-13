@@ -19,16 +19,16 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatListModule} from '@angular/material/list';
-import { LinkDialogComponent } from './link-dialog/link-dialog.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { FilterPipe } from './filter.pipe';
 @NgModule({
   declarations: [
     AppComponent,
     ModalDialogComponent,
-    LinkDialogComponent
+    FilterPipe
   ],
-  entryComponents: [ ModalDialogComponent, LinkDialogComponent ],
+  entryComponents: [ ModalDialogComponent],
   imports: [
     FormsModule,
     BrowserModule,

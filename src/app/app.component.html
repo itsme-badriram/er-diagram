@@ -9,6 +9,7 @@
               Tables
             </mat-panel-description>
           </mat-expansion-panel-header>
+          <div class="container">
           <table style="width: 250px;">
             <tr>
               <td class="tablename">View Relation Details</td>
@@ -19,10 +20,15 @@
               <td class="tableDetails"><img src="../assets/right-arrow.png" width="17px" height="17px"></td>
             </tr>
           </table>
+          <br>
+          <mat-form-field class="example-full-width">
+            <mat-label>Search</mat-label>
+            <input matInput placeholder="Table Name" [(ngModel)] = "searchText" name="search">
+          </mat-form-field>
           <mat-checkbox [checked] = "unselectAll" [indeterminate]="someChecked()" name="unselectAll" (change)="checkAll($event.checked)">
           </mat-checkbox>
           <table class="tables">
-            <tr *ngFor="let modal of modals">
+            <tr *ngFor="let modal of modals | filter : searchText">
               <td class="tablename">
                 <mat-checkbox [(ngModel)] = "modal.checked" [name]="modal.name" (ngModelChange)="getModals(modal)">
                   {{modal.name}}
@@ -36,6 +42,7 @@
               </td>
             </tr>
           </table>
+        </div>
         </mat-expansion-panel>
       </mat-accordion>
         <br>
@@ -57,7 +64,7 @@
                   {{relation.name}}
                 </mat-checkbox>
               </td>
-              <td class="tableRelations" style="font-size: 20px;">
+              <td class="tableRelations" style="font-size: 20px; cursor:pointer" (click)="setKeys(source, relation.name)">
                 {{ relation.arrow }}
               </td>
               <td class="tableDetails" *ngIf="relation.checked">
@@ -73,7 +80,6 @@
     <button mat-stroked-button color="primary" class="buttonbtn" (click)="update$.next(true)">Update</button>
       <button mat-stroked-button color="primary" class="buttonbtn" (click)="center$.next(true)">Center</button>
       <button mat-stroked-button color="primary" class="buttonbtn" (click)="zoomToFit$.next(true)">Zoom to fit</button>
-
   </mat-drawer>
   <mat-drawer-content>
     <div class="page">
@@ -116,15 +122,13 @@
   </svg:g>
 </ng-template>
 <ng-template #linkTemplate let-link>
-  <svg:g  class="edge" (click)="selectedLink(link)" >
+  <svg:g  class="edge" >
     <svg:path     class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
 
     </svg:path>
     <svg:text  class="edge-label" text-anchor="middle" dy="15" >
-      <textPath #tooltip="matTooltip"
-      matTooltip='Info about&#13;the action'
-        matTooltipPosition="right"
-        [matTooltipClass]="'my-tooltip'" class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
+      <textPath matTooltip="{{getTooltip(link)}}"
+      matTooltipClass="test"class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
         {{link.data.relationship}}
       </textPath>
     </svg:text>
