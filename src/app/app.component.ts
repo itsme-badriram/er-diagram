@@ -55,11 +55,27 @@ export class AppComponent implements OnInit {
   zoomSpeed: number = 0.1;
 
   getTooltip(link): string {
-    const masterkey = link.data.masterkey.split(',', 2);
-    const slavekey = link.data.slavekey.split(',', 2);
-    const str = link.data.joinType + ' Join \n' + masterkey[0] + ' = ' + slavekey[0] + '\n'
-     + masterkey[1] + ' = ' + slavekey[1];
+    let masterkey = [];
+    let slavekey = [];
+    for ( const key of link.data.masterkey) {
+      masterkey.push(key.name);
+    }
+    for ( const key of link.data.slavekey) {
+      slavekey.push(key.name);
+    }
+    let str = link.data.joinType + ' Join ';
+    for (let i = 0; i < masterkey.length; i++) {
+      str += '\n' + masterkey[i] + ' = ' + slavekey[i] ;
+    }
     return str;
+    }
+    getKeys(keys) {
+      let str = '';
+      for (const key of keys) {
+        str += key.name + ',';
+      }
+      str = str.substring(0, str.length - 1);
+      return str;
     }
 // Node Click
   selectedNode(node: any) {
@@ -239,13 +255,17 @@ export class AppComponent implements OnInit {
       if ((split[0] === source || split[1] === source) && (split[0] === target || split[1] === target) ) {
         joinType = path.attr('joinType');
         let temp = path.attr('masterkey');
-        let temp1 = temp.split(',', 2);
-        masterKey.push(temp1[0]);
-        masterKey.push(temp1[1]);
+        let temp1 = temp.split(',');
+        for ( const key of temp1) {
+          masterKey.push(key);
+        }
+
         temp = path.attr('slavekey');
-        temp1 = temp.split(',', 2);
-        slaveKey.push(temp1[0]);
-        slaveKey.push(temp1[1]);
+        temp1 = temp.split(',');
+        for ( const key of temp1) {
+          masterKey.push(key);
+        }
+        console.log(masterKey, slaveKey);
     }
   });
     this.joinType = joinType;

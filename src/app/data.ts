@@ -1,6 +1,5 @@
 import { Edge, Node, ClusterNode } from '@swimlane/ngx-graph';
 
-
 export const nodes: Node[] = [
   {
     id: 'dbm_mrd_btl',
@@ -220,8 +219,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
   {
@@ -232,8 +231,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
   {
@@ -244,8 +243,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
   {
@@ -256,8 +255,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
   {
@@ -268,8 +267,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
   {
@@ -280,8 +279,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
   {
@@ -292,8 +291,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   },
    {
@@ -304,8 +303,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'ManyToMany',
       joinType : 'Left',
-      masterkey: 'productcode,reporting_month',
-      slavekey: 'gsn,cob_dt'
+	masterkey: [{name: 'productcode'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'gsn'}, {name: 'cob_dt'}]
     }
   },
   {
@@ -316,8 +315,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+      masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   }, {
     id: 'bb',
@@ -327,8 +326,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'ManyToMany',
       joinType : 'Left',
-      masterkey: 'productcode,reporting_month',
-      slavekey: 'gsn,cob_dt'
+      masterkey: [{name: 'productcode'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'gsn'}, {name: 'cob_dt'}]
     }
   },
   {
@@ -339,8 +338,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'OneToOne',
       joinType : 'Left',
-      masterkey: 'accountkey,reporting_month',
-      slavekey: 'accountkey,reporting_month'
+       masterkey: [{name: 'accountkey'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'accountkey'}, {name: 'reporting_month'}],
     }
   }, {
     id: 'bbb',
@@ -350,8 +349,8 @@ export const links: Edge[] = [
     data: {
       relationship: 'ManyToMany',
       joinType : 'Left',
-      masterkey: 'productcode,reporting_month',
-      slavekey: 'gsn,cob_dt'
+      masterkey: [{name: 'productcode'}, {name: 'reporting_month'}],
+      slavekey: [{name: 'gsn'}, {name: 'cob_dt'}]
     }
   }
 ];

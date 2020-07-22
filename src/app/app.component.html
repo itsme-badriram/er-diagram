@@ -123,12 +123,12 @@
 </ng-template>
 <ng-template #linkTemplate let-link>
   <svg:g  class="edge" >
-    <svg:path     class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="link.data.masterkey" [attr.slavekey]="link.data.slavekey" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
+    <svg:path     class="line" stroke-width="8" [attr.link]="link.source + ' ' + link.target" [attr.masterkey]="getKeys(link.data.masterkey)" [attr.slavekey]="getKeys(link.data.slavekey)" [attr.joinType]="link.data.joinType" stroke-opacity="0.6">
 
     </svg:path>
     <svg:text  class="edge-label" text-anchor="middle" dy="15" >
       <textPath matTooltip="{{getTooltip(link)}}"
-      matTooltipClass="test"class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
+      matTooltipClass="test" class="text-path" [attr.href]="'#' + link.id" startOffset="50%"  >
         {{link.data.relationship}}
       </textPath>
     </svg:text>

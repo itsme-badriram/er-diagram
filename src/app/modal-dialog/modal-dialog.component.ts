@@ -49,13 +49,14 @@ export class ModalDialogComponent implements OnInit {
           relationship['Table'] = this.node.id;
           relationship['Related Table'] = link.source;
         }
-        let split = link.data.masterkey.split(',', 2);
-        relationship['Master Key'].push(split[0]);
-        relationship['Master Key'].push(split[1]);
-
-        split = link.data.slavekey.split(',', 2);
-        relationship['Slave Key'].push(split[0]);
-        relationship['Slave Key'].push(split[1]);
+        let split = link.data.masterkey;
+        for ( const key of split) {
+          relationship['Master Key'].push(key.name);
+        }
+        split = link.data.slavekey;
+        for ( const key of split) {
+          relationship['Slave Key'].push(key.name);
+        }
         relationship.Relationship = link.data.relationship;
         relationship['Join Type'] = link.data.joinType;
         this.relationships.push(relationship);
